@@ -1,0 +1,21 @@
+language: go
+
+go:
+  - "1.15.x"
+  - "1.16.x"
+services:
+  - mysql
+env:
+  global:
+    - ORM_SOURCE="root:@/orm_test?charset=utf8"
+    - ORM_DRIVER="mysql"
+before_install:
+  - export CODECOV_TOKEN="4f4bc484-32a8-43b7-9f48-20966bd48ceb"
+before_script:
+  - sh -c mysql -u root -e 'create database orm_test;';
+after_script:
+  - rm -rf ./res/var/*
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+script:
+  - GO111MODULE=on go test -coverprofile=coverage.txt -covermode=atomic ./...
